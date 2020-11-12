@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Bootstrap Example</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+	<div class="container">
+	
+		<button type="button" class="btn btn-sm  btn-primary" data-toggle="modal" data-target="#myModal">Calculate Dates</button>
+	
+		<div class="modal fade" id="myModal">
+			
+			<div class="modal-dialog modal-xl">
+				
+				<div class="modal-content">
+		
+					<div class="modal-header">
+						<h4 class="modal-title">Calculate Dates</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+			
+					<div class="modal-body">
+			
+						<div class="container">	
+							<div class="row">
+								<div class="col-sm-12">
+									<h5>Calculate Numbers of days between two Dates</h5>
+								</div>
+								<div class="col-lg-12">
+									<div class="form-check">
+										<label>
+											<input type="checkbox" class="form-check-input" id="added" value="1">&nbsp;Include End Date in Calculation (1 day is added)
+										</label>
+									</div>
+								</div>
+								<div class="col-lg-3">
+									<div class="form-group">
+										<label>Start Date:</label>
+										<input type="date" class="form-control form-control-sm" id="start_date1" name="start_date1">
+									</div>
+								</div>
+								<div class="col-lg-3">
+									<div class="form-group">
+										<label>End Date:</label>
+										<input type="date" class="form-control form-control-sm " id="end_date1" name="end_date1">
+									</div>
+								</div>
+								<div class="col-lg-2">
+									<div class="form-group">
+										<label>Press to Calculate</label>
+										<input type="button" class="btn btn-sm btn-primary" value="Calculate Total Days" id="btn_calculate_total_days" onclick="calculate_total_days()">
+									</div>
+								</div>
+								<div class="col-lg-3">
+									<div class="form-group">
+										<label>Total Numbers of Days:</label>
+										<input type="number" class="form-control form-control-sm"  id="numbers_of_days1" name="numbers_of_days1" value="0" readonly>
+									</div>
+								</div>
+							</div>
+						
+							<div class="row">
+								<div class="col-lg-12">
+									<h5>Calculate End Date from Start Date and Numbers of days</h5>
+								</div>
+								<div class="col-lg-3">
+									<div class="form-group">
+										<label>Start Date:</label>
+										<input type="date" class="form-control form-control-sm" id="start_date2" name="start_date2">
+									</div>
+								</div>
+								<div class="col-lg-3">
+									<div class="form-group">
+										<label>Total Numbers of Days:</label>
+										<input type="number" class="form-control form-control-sm"  id="numbers_of_days2" name="numbers_of_days2" value="0">
+									</div>
+								</div>
+								<div class="col-lg-2">
+									<div class="form-group">
+										<label>Press to Calculate</label>
+										<input type="button" class="btn btn-sm btn-primary" value="Calculate End Date" id="btn_calculate_end_date" onclick="calculate_end_date()">
+									</div>
+								</div>
+								<div class="col-lg-3">
+									<div class="form-group">
+										<label>End Date:</label>
+										<input type="date" class="form-control form-control-sm " id="end_date2" name="end_date2" readonly>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+						
+					</div>
+			
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+			
+				</div>
+			
+			</div>
+		
+		</div>
+	
+	</div>
+	
+		
+	<script>
+	
+		start_date1.onchange = function() {
+			if(typeof start_date1.value === 'string') {
+				if(start_date1.value > end_date1.value) {
+					end_date1.value = start_date1.value;
+				}
+				end_date1.min = start_date1.value; // Siempre que cambie la fecha de inicio, ajusto el rango inicial (min) de la fecha final
+				end_date1.max = ""; // "yyyy-mm-dd"; // Solo ajusto este rango si necesitaramos establecer un rango de meses.
+			} 
+		};
+	
+		end_date1.onchange = function() {
+			end_date1.min = start_date1.value; // Siempre que cambie la fecha de inicio, ajusto el rango inicial (min) de la fecha final
+			end_date1.max = ""; // "yyyy-mm-dd"; // Solo ajusto este rango si necesitaramos establecer un rango de meses.
+		};
+	
+		function calculate_total_days() {
+			var sdate = new Date(document.getElementById("start_date1").value);
+			var edate = new Date(document.getElementById("end_date1").value);
+			var added = document.getElementById("added");
+			var milliseconds = edate.getTime() - sdate.getTime();
+			var days = 0;
+			if(document.getElementById("start_date1").value!="" && document.getElementById("end_date1").value!="") {
+				days = Math.floor(milliseconds / (1000 * 60 * 60 * 24));
+				days += (added.checked) ? 1 : 0;
+			} 
+			document.getElementById("numbers_of_days1").value = days;
+		};
+	
+		function calculate_end_date() {
+			var sdate = new Date(document.getElementById("start_date2").value);
+			var ndays = document.getElementById("numbers_of_days2").value;
+			var milliseconds = (sdate.getTime()-86400000) + (ndays * 86400000);
+			var dateFormat = "Y-m-d";
+			//var dateFormat = "Y-m-d H:i:s.v";
+			if(document.getElementById("start_date2").value!="") {
+				var formatted = format(milliseconds, dateFormat);
+			} else {
+				var formatted = "";
+			}
+			document.getElementById("end_date2").value = formatted;
+		};
+	
+		function toDate(date) {
+			if (date === void 0) {
+				return new Date(0);
+			}
+			if (isDate(date)) {
+				return date;
+			} else {
+				return new Date(parseFloat(date.toString()));
+			}
+		}
+	
+		function isDate(date) {
+			return (date instanceof Date);
+		}
+	
+		function format(date, format) {
+			var d = toDate(date);
+			return format
+			.replace(/Y/gm, d.getFullYear().toString())
+			.replace(/m/gm, ('0' + (d.getMonth() + 1)).substr(-2))
+			.replace(/d/gm, ('0' + (d.getDate() + 1)).substr(-2))
+			.replace(/H/gm, ('0' + (d.getHours() + 0)).substr(-2))
+			.replace(/i/gm, ('0' + (d.getMinutes() + 0)).substr(-2))
+			.replace(/s/gm, ('0' + (d.getSeconds() + 0)).substr(-2))
+			.replace(/v/gm, ('0000' + (d.getMilliseconds() % 1000)).substr(-3));
+		}
+	</script>
+
+</body>
+
+</html>
+
